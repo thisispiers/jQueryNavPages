@@ -1,0 +1,29 @@
+{
+    "name": "jQueryNavPages",
+    "version": "1.0",
+    "description": "Animated, programmable and easily navigated pages",
+    "author": "Piers Simms",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/thisispiers/jQueryNavPages"
+    },
+    "keywords": [
+        "navigation",
+        "slide",
+        "pages",
+        "carousel",
+        "jquery",
+        "plugin",
+        "widget",
+        "jquery-plugin"
+    ],
+    "bugs": {
+        "url": "https://github.com/thisispiers/jQueryNavPages/issues"
+    },
+    "homepage": "https://github.com/thisispiers/jQueryNavPages",
+    "main": "jquery.nav-pages.js",
+    "dependencies": {
+        "jquery": ">=1.7",
+    },
+}
