@@ -25,5 +25,5 @@
     "main": "jquery.nav-pages.js",
     "dependencies": {
         "jquery": ">=1.7",
-    },
+    }
 }

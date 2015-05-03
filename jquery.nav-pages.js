@@ -101,3 +101,8 @@
 
     };
 })(jQuery);
+
+// autoload elements
+jQuery(function($){
+    $('.nav-pages').navPages('.nav-page');
+});
