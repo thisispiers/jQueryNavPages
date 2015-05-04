@@ -1,6 +1,6 @@
 /* jQueryNavPages 1.0.1 (https://github.com/thisispiers/jQueryNavPages)
  * Animated, programmable and easily navigated pages
- * Made available by Piers Simms (http://c1h.co.uk) under the MIT license (http://opensource.org/licenses/mit-license.php) */
+ * Made available by Piers Simms (http://c1h.co.uk) under the MIT @license (http://opensource.org/licenses/mit-license.php) */
 (function($){
     $.fn.navPages = function(opts, opts2){
         var settings = this.settings = {
@@ -93,8 +93,10 @@
         };
 
         // bind events
-        settings.parent.delegate('[href^=#][href!=#]:not(' + settings.ignoreSelector + '):not(' + settings.backSelector + '), [data-goto-nav-page]:not(' + settings.ignoreSelector + '):not(' + settings.backSelector + ')', 'click', _this.goTo);
-        settings.parent.delegate(settings.backSelector + ':not(' + settings.ignoreSelector + ')', 'click', _this.goBack);
+        var ignoreSelector = typeof settings.ignoreSelector === 'array' ? settings.ignoreSelector.join(',') : settings.ignoreSelector,
+            backSelector = typeof settings.backSelector === 'array' ? settings.backSelector.join(',') : settings.backSelector;
+        settings.parent.delegate('[href^=#][href!=#]:not(' + ignoreSelector + '):not(' + backSelector + '), [data-goto-nav-page]:not(' + ignoreSelector + '):not(' + backSelector + ')', 'click', _this.goTo);
+        settings.parent.delegate(backSelector + ':not(' + ignoreSelector + ')', 'click', _this.goBack);
 
         // return
         return _this;
