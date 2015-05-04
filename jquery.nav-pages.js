@@ -94,8 +94,9 @@
 
         // bind events
         var ignoreSelector = typeof settings.ignoreSelector === 'array' ? settings.ignoreSelector.join(',') : settings.ignoreSelector,
-            backSelector = typeof settings.backSelector === 'array' ? settings.backSelector.join(',') : settings.backSelector;
-        settings.parent.delegate('[href^=#][href!=#]:not(' + ignoreSelector + '):not(' + backSelector + '), [data-goto-nav-page]:not(' + ignoreSelector + '):not(' + backSelector + ')', 'click', _this.goTo);
+            backSelector = typeof settings.backSelector === 'array' ? settings.backSelector.join(',') : settings.backSelector,
+            goToNotSelectors = [ignoreSelector, backSelector].join(',');
+        settings.parent.delegate('[href^=#][href!=#]:not(' + goToNotSelectors + '), [data-goto-nav-page]:not(' + goToNotSelectors + ')', 'click', _this.goTo);
         settings.parent.delegate(backSelector + ':not(' + ignoreSelector + ')', 'click', _this.goBack);
 
         // return
