@@ -8,8 +8,11 @@
                 parent: $(this).parent(),
                 animation: {}, // $.animate() defaults
                 startPage: 0,
-                backSelector: '[data-goback-nav-page], .nav-page-back',
-                ignoreSelector: '[data-ignore-nav-page], .nav-page-ignore',
+                selectors: {
+                    goto: 'goto-nav-page',
+                    back: '[data-goback-nav-page], .nav-page-back',
+                    ignore: '[data-ignore-nav-page], .nav-page-ignore',
+                },
             },
             typeof_opts = typeof opts;
         if(typeof_opts === 'string'){
@@ -31,11 +34,12 @@
             settings.parent.data('nav-pages-init', true).wrapInner('<div style="width:100%;height:100%;position:relative;overflow:hidden;"></div>'); // wrap pages
 
             settings.pages.each(function(i){
-                var startDiff = $(this).index() - settings.startPage;
+                var $this = $(this),
+                    startDiff = i - settings.startPage;
                 if(startDiff < 1){
-                    pageHistory.push($(this)); // push our start page into history
+                    pageHistory.push($this); // push our start page into history
                 }
-                $(this).css({ // properly style each page
+                $this.css({ // properly style each page
                     'width': '100%',
                     'height': '100%',
                     'position': 'relative',
@@ -52,16 +56,17 @@
         var _this = {
             settings: settings,
             goTo: function(e){
+                var new_page;
                 if(e.target){
                     e.preventDefault();
                     var $this = $(this),
-                        dataSelector = $this.data('goto-nav-page'),
-                        new_page_selector = (dataSelector ? dataSelector : $this.attr('href')),
+                        dataSelector = $this.data(settings.selectors.goto),
+                        new_page_selector = (dataSelector ? dataSelector : $this.attr('href'));
                         new_page = $(new_page_selector);
                 } else if(e){
-                    var new_page = $(e, settings.parent);
+                    new_page = $(e, settings.parent);
                 }
-                if(new_page && new_page.length == 1){
+                if(new_page && new_page.length === 1){
                     pageHistory.push(new_page);
                     var old_page = pageHistory[pageHistory.length - 2];
 
@@ -93,19 +98,17 @@
         };
 
         // bind events
-        var ignoreSelector = typeof settings.ignoreSelector === 'array' ? settings.ignoreSelector.join(',') : settings.ignoreSelector,
-            backSelector = typeof settings.backSelector === 'array' ? settings.backSelector.join(',') : settings.backSelector,
-            goToNotSelectors = [ignoreSelector, backSelector].join(',');
-        settings.parent.delegate('[href^=#][href!=#]:not(' + goToNotSelectors + '), [data-goto-nav-page]:not(' + goToNotSelectors + ')', 'click', _this.goTo);
+        var selectors = settings.selectors,
+            ignoreSelector = typeof selectors.ignore === 'array' ? selectors.ignore.join(',') : selectors.ignore,
+            backSelector = typeof selectors.back === 'array' ? selectors.back.join(',') : selectors.back,
+            gotoNotSelectors = [ignoreSelector, backSelector].join(',');
+        settings.parent.delegate('[href^=#][href!=#]:not(' + gotoNotSelectors + '), [data-' + selectors.goto + ']:not(' + gotoNotSelectors + ')', 'click', _this.goTo);
         settings.parent.delegate(backSelector + ':not(' + ignoreSelector + ')', 'click', _this.goBack);
 
         // return
         return _this;
 
     };
-})(jQuery);
 
-// autoload elements
-jQuery(function($){
     $('.nav-pages').navPages('.nav-page');
-});
+})(jQuery);

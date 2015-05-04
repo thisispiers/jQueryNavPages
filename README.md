@@ -8,10 +8,13 @@ HTML:
 
     <div id="nav-pages">
         <div class="nav-page" id="nav-page-1">
-            Welcome to page 1 <a href="#nav-page-2">Go to page 2</a>
+            Welcome to page 1 <a href="#nav-page-2">Go to page 2</a> <a href="#" data-goto-nav-page="#nav-page-3">Go to page 3</a>
         </div>
         <div class="nav-page" id="nav-page-2">
-            Welcome to page 2 <a href="#" class="nav-page-back">Back</a>
+            Welcome to page 2 <a href="#" class="nav-page-back">Back</a> <a href="#nav-page-3">Go to page 3</a>
+        </div>
+        <div class="nav-page" id="nav-page-3">
+            Welcome to page 3 <a href="#" data-goback-nav-page>Back</a>
         </div>
     </div>
 
@@ -45,10 +48,19 @@ _Default: 0<br>
 _Optional_<br>
 0 based index of which page to show first
 
-- **backSelector**<br>
-_Default: `.nav-page-back`<br>
-_Optional_<br>
-When these elements are clicked, the page navigates in reverse.
+- **selectors**<br>
+    - **goto**<br>
+    _Default: `goto-nav-page`<br>
+    _Optional_<br>
+    This sets the name of the `data-*` attribute that overrides the `href` attribute when a link is clicked.
+    - **back**<br>
+    _Default: `[data-goback-nav-page], .nav-page-back`<br>
+    _Optional_<br>
+    When these elements are clicked, the page navigates in reverse.
+    - **ignore**<br>
+    _Default: `[data-ignore-nav-page], .nav-page-ignore`<br>
+    _Optional_<br>
+    These elements are ignored when clicked.
 
 All options (except _pages_) can also be set by passing an object when calling `$.navPages();`
 
