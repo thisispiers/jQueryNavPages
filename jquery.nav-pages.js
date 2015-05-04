@@ -1,6 +1,6 @@
-/* jQueryNavPages 1.0 (https://github.com/thisispiers/jQueryNavPages)
+/* jQueryNavPages 1.0.1 (https://github.com/thisispiers/jQueryNavPages)
  * Animated, programmable and easily navigated pages
- * Made available by Piers Simms (http://c1h.co.uk) under the MIT license (http://opensource.org/licenses/mit-license.php) */
+ * Made available by Piers Simms (http://c1h.co.uk) under the MIT @license (http://opensource.org/licenses/mit-license.php) */
 (function($){
     $.fn.navPages = function(opts, opts2){
         var settings = this.settings = {
@@ -8,7 +8,11 @@
                 parent: $(this).parent(),
                 animation: {}, // $.animate() defaults
                 startPage: 0,
-                backSelector: '.nav-page-back',
+                selectors: {
+                    goto: 'goto-nav-page',
+                    back: '[data-goback-nav-page], .nav-page-back',
+                    ignore: '[data-ignore-nav-page], .nav-page-ignore',
+                },
             },
             typeof_opts = typeof opts;
         if(typeof_opts === 'string'){
@@ -30,11 +34,12 @@
             settings.parent.data('nav-pages-init', true).wrapInner('<div style="width:100%;height:100%;position:relative;overflow:hidden;"></div>'); // wrap pages
 
             settings.pages.each(function(i){
-                var startDiff = $(this).index() - settings.startPage;
+                var $this = $(this),
+                    startDiff = i - settings.startPage;
                 if(startDiff < 1){
-                    pageHistory.push($(this)); // push our start page into history
+                    pageHistory.push($this); // push our start page into history
                 }
-                $(this).css({ // properly style each page
+                $this.css({ // properly style each page
                     'width': '100%',
                     'height': '100%',
                     'position': 'relative',
@@ -51,16 +56,17 @@
         var _this = {
             settings: settings,
             goTo: function(e){
+                var new_page;
                 if(e.target){
                     e.preventDefault();
                     var $this = $(this),
-                        dataSelector = $this.data('goto-nav-page'),
-                        new_page_selector = (dataSelector ? dataSelector : $this.attr('href')),
+                        dataSelector = $this.data(settings.selectors.goto),
+                        new_page_selector = (dataSelector ? dataSelector : $this.attr('href'));
                         new_page = $(new_page_selector);
                 } else if(e){
-                    var new_page = $(e, settings.parent);
+                    new_page = $(e, settings.parent);
                 }
-                if(new_page && new_page.length == 1){
+                if(new_page && new_page.length === 1){
                     pageHistory.push(new_page);
                     var old_page = pageHistory[pageHistory.length - 2];
 
@@ -92,17 +98,17 @@
         };
 
         // bind events
-        var backSelector = settings.backSelector ? ', ' + settings.backSelector : '';
-        settings.parent.delegate('[href^=#][href!=#]:not([data-goback-nav-page]):not(' + settings.backSelector + '), [data-goto-nav-page]:not([data-goback-nav-page]):not(' + settings.backSelector + ')', 'click', _this.goTo);
-        settings.parent.delegate('[data-goback-nav-page]' + backSelector, 'click', _this.goBack);
+        var selectors = settings.selectors,
+            ignoreSelector = typeof selectors.ignore === 'array' ? selectors.ignore.join(',') : selectors.ignore,
+            backSelector = typeof selectors.back === 'array' ? selectors.back.join(',') : selectors.back,
+            gotoNotSelectors = [ignoreSelector, backSelector].join(',');
+        settings.parent.delegate('[href^=#][href!=#]:not(' + gotoNotSelectors + '), [data-' + selectors.goto + ']:not(' + gotoNotSelectors + ')', 'click', _this.goTo);
+        settings.parent.delegate(backSelector + ':not(' + ignoreSelector + ')', 'click', _this.goBack);
 
         // return
         return _this;
 
     };
-})(jQuery);
 
-// autoload elements
-jQuery(function($){
     $('.nav-pages').navPages('.nav-page');
-});
+})(jQuery);
